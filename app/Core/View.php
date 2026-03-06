@@ -15,6 +15,9 @@ final class View
             exit('Vista no encontrada');
         }
 
+        $scriptDir = dirname($_SERVER['SCRIPT_NAME'] ?? '');
+        $baseUrl = $scriptDir === '/' || $scriptDir === '.' ? '' : rtrim(str_replace('\\', '/', $scriptDir), '/');
+
         extract($data, EXTR_SKIP);
         require __DIR__ . '/../Views/layouts/main.php';
     }

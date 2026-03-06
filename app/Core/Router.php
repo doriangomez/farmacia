@@ -14,9 +14,16 @@ final class Router
         $this->routes['GET:' . $this->normalizePath($path)] = $handler;
     }
 
-    public function dispatch(string $method, string $uri): void
+    public function dispatch(string $method, string $uri, string $basePath = ''): void
     {
         $path = parse_url($uri, PHP_URL_PATH) ?: '/';
+        $basePath = $this->normalizeBasePath($basePath);
+
+        if ($basePath !== '' && str_starts_with($path, $basePath)) {
+            $path = substr($path, strlen($basePath));
+            $path = $path === '' ? '/' : $path;
+        }
+
         $key = strtoupper($method) . ':' . $this->normalizePath($path);
 
         if (!isset($this->routes[$key])) {
@@ -35,5 +42,14 @@ final class Router
         }
 
         return '/' . trim($path, '/');
+    }
+
+    private function normalizeBasePath(string $basePath): string
+    {
+        if ($basePath === '' || $basePath === '/' || $basePath === '.') {
+            return '';
+        }
+
+        return '/' . trim($basePath, '/');
     }
 }

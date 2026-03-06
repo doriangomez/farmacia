@@ -26,4 +26,11 @@ $router->get('/', static fn () => (new DashboardController())->index());
 $router->get('/productos', static fn () => (new ProductController())->index());
 $router->get('/inventario', static fn () => (new InventoryController())->index());
 
-$router->dispatch($_SERVER['REQUEST_METHOD'] ?? 'GET', $_SERVER['REQUEST_URI'] ?? '/');
+$basePath = dirname($_SERVER['SCRIPT_NAME'] ?? '');
+$basePath = $basePath === '.' ? '' : str_replace('\\', '/', $basePath);
+
+$router->dispatch(
+    $_SERVER['REQUEST_METHOD'] ?? 'GET',
+    $_SERVER['REQUEST_URI'] ?? '/',
+    $basePath
+);
